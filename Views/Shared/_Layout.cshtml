@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - Zamify</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.x.x/dist/alpine.min.js" defer></script>
+    @* <meta name="csrf-token" content="@Html.AntiForgeryToken()"/> *@
+    @Html.AntiForgeryToken()
+
+
+</head>
+<body class="bg-white text-gray-900">
+    <nav class="bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="text-xl font-bold text-indigo-600">Zamify</div>
+
+                <div class="hidden md:flex flex-grow justify-center space-x-4">
+                    <a href="/" class="text-gray-600 px-4 py-2 rounded-lg hover:bg-indigo-600 hover:text-white transition duration-300">Home</a>
+                    <a href="#features" class="text-gray-600 px-4 py-2 rounded-lg hover:bg-indigo-600 hover:text-white transition duration-300">Features</a>
+                    <a href="#roles" class="text-gray-600 px-4 py-2 rounded-lg hover:bg-indigo-600 hover:text-white transition duration-300">Roles</a>
+                    <a href="#testimonials" class="text-gray-600 px-4 py-2 rounded-lg hover:bg-indigo-600 hover:text-white transition duration-300">Testimonials</a>
+                    <a href="@Url.Action("About", "Home")" class="text-gray-600 px-4 py-2 rounded-lg hover:bg-indigo-600 hover:text-white transition duration-300">About Us</a>
+                </div>
+
+                <!-- Get Started Button -->
+                <div class="hidden md:flex">
+                    <button onclick="window.location.href=' @Url.Action("Login", "Home") '"
+                            class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-300">
+                        Get Started
+                    </button>
+                </div>
+                <!-- Mobile Menu Toggle -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-600 focus:outline-none">
+                        ☰
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Role-Based Navbar (Admin/Teacher/Student) -->
+    @{
+        var role = User.IsInRole("Admin") ? "Admin" :
+        User.IsInRole("Teacher") ? "Teacher" :
+        User.IsInRole("Student") ? "Student" : "Guest";
+    }
+
+    @if (role == "Admin")
+    {
+        <nav class="bg-gray-800 text-white p-4">
+            <div class="max-w-7xl mx-auto flex justify-between">
+                <h2 class="text-lg font-bold">Admin Panel</h2>
+                <a href="@Url.Action("Logout", "Account")" class="text-red-400">Logout</a>
+            </div>
+        </nav>
+    }
+    else if (role == "Teacher")
+    {
+        <nav class="bg-blue-700 text-white p-4">
+            <div class="max-w-7xl mx-auto flex justify-between">
+                <h2 class="text-lg font-bold">Teacher Panel</h2>
+                <a href="@Url.Action("Logout", "Account")" class="text-red-400">Logout</a>
+            </div>
+        </nav>
+    }
+    else if (role == "Student")
+    {
+        <nav class="bg-green-700 text-white p-4">
+            <div class="max-w-7xl mx-auto flex justify-between">
+                <h2 class="text-lg font-bold">Student Panel</h2>
+                <a href="@Url.Action("Logout", "Account")" class="text-red-400">Logout</a>
+            </div>
+        </nav>
+    }
+
+
+
+    <!-- Page Content --> 
+    <div class="min-h-screen"> 
+         @RenderBody() 
+    </div>
+
+
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8 mt-10">
+        <div class="max-w-7xl mx-auto text-center">
+            <p>&copy; 2025 Zamify. All rights reserved.</p>
+        </div>
+    </footer>
+
+
+    @RenderSection("Scripts", required: false)
+
+
+
+</body>
+</html>
+
+
+<script>
+    document.getElementById('mobile-menu-button').addEventListener('click', function () {
+        document.getElementById('mobile-menu').classList.toggle('hidden');
+    });
+</script>

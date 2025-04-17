@@ -1,0 +1,207 @@
+﻿@model List<Zamify.Models.Question>
+
+@{
+    Layout = null;
+}
+
+@* Bulk Question Creation View *@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Create Questions in Bulk</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <style>
+        body {
+            background-color: #f0f2f5;
+            padding: 30px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+
+        .question-container {
+            background-color: #fff;
+            border-left: 5px solid #007bff;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .remove-question {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            font-size: 24px;
+            color: #dc3545;
+            cursor: pointer;
+        }
+
+        .btn-add {
+            margin: 20px 0;
+        }
+
+        .form-title {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .back-link {
+            margin-top: 20px;
+            display: inline-block;
+        }
+
+        @@media (max-width: 576px) {
+            .remove-question
+
+        {
+            font-size: 20px;
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Create Questions in Bulk</h1>
+
+        <form asp-action="CreateBulk" method="post" id="bulk-form">
+            <div class="form-group">
+                <label for="SubjectId">Select Subject</label>
+                <select name="SubjectId" class="form-control" asp-items="ViewBag.SubjectId" required>
+                    <option value="">-- Select Subject --</option>
+                </select>
+            </div>
+
+            <div id="questions-container">
+                @for (var i = 0; i < Model.Count; i++)
+                {
+                    <div class="question-container">
+                        <span class="remove-question" onclick="removeQuestion(this)">×</span>
+                        <div class="form-title">Question @(i + 1)</div>
+
+                        <input type="hidden" name="[@i].Id" value="@Model[i].Id" />
+
+                        <div class="form-group">
+                            <label>Question Text</label>
+                            <input class="form-control" name="[@i].QuestionText" value="@Model[i].QuestionText" required />
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Option A</label>
+                                <input class="form-control" name="[@i].OptionA" value="@Model[i].OptionA" required />
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Option B</label>
+                                <input class="form-control" name="[@i].OptionB" value="@Model[i].OptionB" required />
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Option C</label>
+                                <input class="form-control" name="[@i].OptionC" value="@Model[i].OptionC" required />
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Option D</label>
+                                <input class="form-control" name="[@i].OptionD" value="@Model[i].OptionD" required />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Correct Option</label>
+                            <input class="form-control" name="[@i].CorrectOption" value="@Model[i].CorrectOption" required />
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <button type="button" class="btn btn-outline-primary btn-add" id="add-question-btn">+ Add Another Question</button>
+
+            <div class="form-group">
+                <input type="submit" value="Create All Questions" class="btn btn-primary" />
+            </div>
+        </form>
+
+        <a asp-action="Index" class="back-link">← Back to Question List</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('add-question-btn').addEventListener('click', addQuestion);
+        });
+
+        function addQuestion() {
+            const container = document.getElementById('questions-container');
+            const index = container.children.length;
+
+            const questionHTML = `
+                <div class="question-container">
+                    <span class="remove-question" onclick="removeQuestion(this)">×</span>
+                    <div class="form-title">Question ${index + 1}</div>
+
+                    <div class="form-group">
+                        <label>Question Text</label>
+                        <input name="[${index}].QuestionText" class="form-control" required />
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label>Option A</label>
+                            <input name="[${index}].OptionA" class="form-control" required />
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Option B</label>
+                            <input name="[${index}].OptionB" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label>Option C</label>
+                            <input name="[${index}].OptionC" class="form-control" required />
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Option D</label>
+                            <input name="[${index}].OptionD" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Correct Option</label>
+                        <input name="[${index}].CorrectOption" class="form-control" required />
+                    </div>
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', questionHTML);
+        }
+
+        function removeQuestion(element) {
+            const container = element.closest('.question-container');
+            container.remove();
+            reindexQuestions();
+        }
+
+        function reindexQuestions() {
+            const containers = document.querySelectorAll('.question-container');
+            containers.forEach((q, index) => {
+                q.querySelector('.form-title').textContent = `Question ${index + 1}`;
+                const inputs = q.querySelectorAll('input');
+                inputs.forEach(input => {
+                    const name = input.getAttribute('name');
+                    if (name) {
+                        input.setAttribute('name', name.replace(/\[\d+\]/, `[${index}]`));
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>

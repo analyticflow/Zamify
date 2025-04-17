@@ -1,0 +1,223 @@
+﻿@using Microsoft.CodeAnalysis.Differencing
+@model LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+   // Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = null;
+}
+
+@foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+{
+    <div class="alert alert-danger" role="alert">
+        @error.ErrorMessage
+    </div>
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <style>
+
+        .back-to-home {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #4338CA;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+            .back-to-home:hover {
+                text-decoration: underline;
+            }
+
+        /* Centered Container */
+        .container-center {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f1f1f1;
+            padding: 20px;
+        }
+
+        /* Login Box */
+        .login-box {
+            display: flex;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-width: 900px;
+            width: 100%;
+            align-items: center;
+            padding: 40px;
+        }
+
+        /* Image Section */
+        .image-container {
+            width: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+            .image-container img {
+                max-width: 100%;
+                height: auto;
+            }
+
+        /* Form Section */
+        .form-container {
+            width: 50%;
+            padding: 40px;
+            text-align: center;
+        }
+
+            .form-container h2 {
+                font-weight: bold;
+                font-size: 24px;
+                color: #333;
+                margin-bottom: 20px;
+            }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+            .form-group label {
+                font-weight: 600;
+                color: #333;
+            }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background: #f9f9f9;
+            font-size: 16px;
+        }
+
+            .form-control:focus {
+                border-color: #007bff;
+                box-shadow: 0 0 6px rgba(0, 123, 255, 0.5);
+                background: white;
+            }
+
+        .btn-primary {
+            width: 107%;
+            padding: 12px;
+            background-color: #4F46E5; /* Tailwind's indigo-600 */
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+            .btn-primary:hover {
+                background: #4338CA;
+            }
+
+        /* Social Login */
+        .social-login {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+            .social-login a {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                color: white;
+                text-decoration: none;
+                font-size: 18px;
+                transition: 0.3s;
+            }
+
+      
+
+        .register-link {
+            margin-top: 10px;
+        }
+
+            .register-link a {
+                text-decoration: none;
+                font-weight: 600;
+                color: #007bff;
+            }
+
+                .register-link a:hover {
+                    text-decoration: underline;
+                }
+
+        /* Responsive Design */
+        @@media (max-width: 768px) {
+            .login-box
+
+        {
+            flex-direction: column;
+            max-width: 90%;
+        }
+
+        .image-container {
+            width: 100%;
+            order: -1;
+        }
+
+        .form-container {
+            width: 100%;
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="container-center">
+        <div class="login-box">
+            <!-- Left Side - Image -->
+            <div class="image-container">
+                <img src="~/images/login-image.png" alt="Login Illustration">
+            </div>
+            <!-- Right Side - Form -->
+            <div class="form-container">
+
+                <h1>Sign in</h1><br />
+                <form asp-action="Login" method="post">
+                    <div class="form-group">
+                        <label asp-for="Email">Email</label>
+                        <input asp-for="Email" class="form-control" type="email" required />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Password">Password</label>
+                        <input asp-for="Password" class="form-control" type="password" required />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="checkbox" id="rememberMe" />
+                        <label for="rememberMe">Remember me</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Log in</button><br /><br />
+                    <!-- Back to Home Button -->
+                    <div>
+                        <a href="@Url.Action("Index", "Home")" class="back-to-home">← Back to Home</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

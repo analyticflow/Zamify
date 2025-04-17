@@ -1,0 +1,212 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- In _Sidebar.cshtml -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --hover-color: #6366f1;
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+        }
+
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background: #ffffff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            transition: transform var(--transition-speed) ease;
+            z-index: 1000;
+            padding: 1rem;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.05);
+        }
+
+            .sidebar.collapsed {
+                transform: translateX(-100%);
+            }
+
+        .sidebar-header {
+            padding: 1rem 0;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+            .sidebar-header h4 {
+                color: var(--primary-color);
+                font-weight: 700;
+                font-size: 1.2rem;
+            }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all var(--transition-speed) ease;
+        }
+
+            .nav-link i {
+                width: 40px;
+                font-size: 1.2rem;
+                text-align: center;
+            }
+
+            .nav-link:hover {
+                background: var(--primary-color);
+                color: white;
+            }
+
+        .sidebar-toggle {
+            position: fixed;
+            left: 15px;
+            top: 20px;
+            background: var(--primary-color);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1100;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 2rem;
+            transition: margin-left var(--transition-speed) ease;
+            min-height: 100vh;
+        }
+
+        @@media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 260px;
+            }
+
+                .sidebar.expanded {
+                    transform: translateX(0);
+                    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
+                }
+
+            .main-content {
+                margin-left: 0 !important;
+                width: 100%;
+            }
+
+            .sidebar-toggle {
+                left: 20px;
+            }
+
+            .sidebar.expanded + .main-content::after {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.3);
+                z-index: 999;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h4>Exam Portal</h4>
+        </div>
+        <a href="@Url.Action("ADashboard", "Admin")" class="nav-link">
+            <i class="fas fa-home"></i> <span>Dashboard</span>
+        </a>
+        <a href="@Url.Action("TeacherList", "Admin")" class="nav-link">
+            <i class="fas fa-chalkboard-teacher"></i> <span>Manage Teachers</span>
+        </a>
+        <a href="@Url.Action("StudentList", "Admin")" class="nav-link">
+            <i class="fas fa-user-graduate"></i> <span>Manage Students</span>
+        </a>
+        <a href="@Url.Action("ExamList", "Admin")" class="nav-link">
+            <i class="fas fa-file-alt"></i> <span>Manage Exams</span>
+        </a>
+        <div class="mt-auto">
+           @*  <a href="@Url.Action("Logout", "Account")" class="nav-link text-danger">
+                <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+            </a> *@
+
+            <a href="@Url.Action("Logout", "Home")" class="nav-link text-danger">
+                <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+            </a>
+
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            const sidebar = document.getElementById('sidebar');
+            const isMobile = window.innerWidth <= 768;
+
+            if(isMobile) {
+                sidebar.classList.toggle('expanded');
+                document.body.classList.toggle('no-scroll');
+            } else {
+                sidebar.classList.toggle('collapsed');
+                document.querySelector('.main-content').style.marginLeft =
+                    sidebar.classList.contains('collapsed') ? '0' : '260px';
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+
+            if(window.innerWidth <= 768 &&
+               !sidebar.contains(e.target) &&
+               !sidebarToggle.contains(e.target)) {
+                sidebar.classList.remove('expanded');
+                document.body.classList.remove('no-scroll');
+            }
+        });
+    </script>
+
+    <main class="main-content">
+        @RenderBody()
+    </main>
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>
